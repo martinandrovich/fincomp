@@ -1,0 +1,2 @@
+# fincomp
+Computational finance methods.
