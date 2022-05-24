@@ -1,2 +1,2 @@
-# fincomp
-Computational finance methods.
+# pyfin
+Computational finance methods in Python.
