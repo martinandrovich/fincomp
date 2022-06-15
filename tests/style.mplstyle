@@ -1,0 +1,16 @@
+# https://matplotlib.org/3.5.0/tutorials/introductory/customizing.html#the-default-matplotlibrc-file
+
+figure.figsize: 6, 6
+figure.autolayout: True
+savefig.bbox: tight
+# text.usetex: true
+
+lines.linewidth : 1
+# lines.markersize : 10
+
+figure.titlesize: 15
+axes.titlesize : 15
+axes.labelsize : 15
+ytick.labelsize : 13
+xtick.labelsize : 13
+legend.fontsize: large
