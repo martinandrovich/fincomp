@@ -10,11 +10,11 @@ def TSLA():
 		data = json.load(fp)
 		data["dt"] = 1
 
-	S = data["S"]
-	t = data["dates"] + 693960  # days since year 0000
+	S = np.array(data["S"])
+	t = np.array(data["dates"]) + 693960  # days since year 0000
 	dt = data["dt"]
 
-	return np.array(t), np.array(S), dt
+	return t, S, dt
 
 
 def download_dataset(tag: str = "", period: str = "5y"):
