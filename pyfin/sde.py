@@ -115,3 +115,24 @@ def ou(s0, kappa, theta, sigma, T, dt=0.01, num_paths=10, reproducible=False):
 		S[:, i + 1] = S[:, i] + kappa * (theta - S[:, i]) * dt + sigma * dW
 
 	return t, S
+
+def abm_corr(s0, mu, C, D, T, dt=0.01, reproducible=False):
+
+	if reproducible:
+		np.random.seed(DEFAULT_SEED)
+
+	num_steps = int(T / dt)
+	num_paths = len(mu)
+
+	Z = np.random.normal(0.0, 1.0, [num_paths, num_steps])
+	S = np.zeros([num_paths, num_steps + 1])
+	t = np.linspace(0, T, num_steps + 1)
+	L = np.linalg.cholesky(C)
+	sigma = D @ L
+
+	for i in range(0, num_steps):
+
+		dW = Z[:, i] * sqrt(dt)
+		S[:, i + 1] = S[:, i] + mu * dt + sigma @ dW
+
+	return t, S
