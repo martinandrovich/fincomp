@@ -130,6 +130,8 @@ def abm_corr(s0, mu, C, D, T, dt=0.01, reproducible=False):
 	L = np.linalg.cholesky(C)
 	sigma = D @ L
 
+	S[:, 0] = s0
+
 	for i in range(0, num_steps):
 
 		dW = Z[:, i] * sqrt(dt)
