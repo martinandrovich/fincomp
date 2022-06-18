@@ -1,5 +1,4 @@
 import numpy as np
-from enum import Enum, auto
 from math import log, sqrt, exp
 import scipy.stats as st
 from pyfin import gbm
