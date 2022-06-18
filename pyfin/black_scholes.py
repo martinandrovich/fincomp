@@ -34,3 +34,24 @@ def bs_num(option_type, s0, K, r, sigma, T, t=0, num_paths=1000):
 	V = exp(-r * (T - t)) * np.mean(H)
 
 	return V
+
+
+def bs_imp(option_type, market_price, s0, K, r, sigma_init, T, t=0):
+	
+	# Vega = dV/dsigma
+	def vega(S_0, K, sigma, tau, r):
+		d2   = (np.log(S_0 / float(K)) + (r - 0.5 * np.power(sigma,2.0)) * tau) / float(sigma * np.sqrt(tau))
+		value = K * np.exp(-r * tau) * st.norm.pdf(d2) * np.sqrt(tau)
+		return value
+	
+	error = 1e10
+	sigma = sigma_init
+
+	while error > 1e-10:
+		e = market_price - bs(option_type, s0, K, r, sigma_init, T, t)
+		e_prime = -vega(sigma)
+		sigma_new = sigma - e/e_prime
+		error = abs(sigma_new - sigma)
+		sigma = sigma_new
+
+	return sigma
