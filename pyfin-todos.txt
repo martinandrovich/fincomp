@@ -1,0 +1,13 @@
+# todos
+
+- fix permalinks
+- change figures to subplot
+- references (book, papers etc.)
+
+# todo (peter)
+
+- what is F_N? maybe F_Z instead
+- options fundamentals (from notes + add whatever needed) > 0-intro.ipynb
+- explain BS assumptions/deficiencies (short)
+- overview of pricing methods
+- intro text to merton, eqs for merton + poisson etc.

@@ -1,7 +1,8 @@
 import numpy as np
-from math import sqrt
+from math import sqrt, exp, log
 
 DEFAULT_SEED = 0
+
 
 def abm(s0, mu, sigma, T, dt=0.01, num_paths=10, reproducible=False):
 	"""Arithmeic brownian motion."""
@@ -116,6 +117,7 @@ def ou(s0, kappa, theta, sigma, T, dt=0.01, num_paths=10, reproducible=False):
 
 	return t, S
 
+
 def abm_corr(s0, mu, C, D, T, dt=0.01, reproducible=False):
 
 	if reproducible:
@@ -138,3 +140,35 @@ def abm_corr(s0, mu, C, D, T, dt=0.01, reproducible=False):
 		S[:, i + 1] = S[:, i] + mu * dt + sigma @ dW
 
 	return t, S
+
+
+def merton(s0, r, sigma, mu_J, sigma_J, xi_p, T, dt=0.01, num_paths=10, reproducible=False):
+
+	if reproducible:
+		np.random.seed(DEFAULT_SEED)
+
+	num_steps = int(T / dt)
+
+	P = np.random.poisson(xi_p * dt, [num_paths, num_steps + 1])
+	Z = np.random.normal(0.0, 1.0, [num_paths, num_steps])
+	J = np.random.normal(mu_J, sigma_J, [num_paths, num_steps])
+	X = np.zeros([num_paths, num_steps + 1])
+	t = np.linspace(0, T, num_steps + 1)
+
+	X[:, 0] = log(s0)
+
+	for i in range(0, num_steps):
+
+		if num_paths > 1:  # standardize samples (mean: 0, var: 1)
+			Z[:, i] = (Z[:, i] - np.mean(Z[:, i])) / np.std(Z[:, i])
+
+		w = xi_p * (exp(mu_J + (sigma_J ** 2) / 2) - 1)  # drift correction term
+		dW = sqrt(dt) * Z[:, i]
+		# dP = P[:, i] - P[:, 0]
+		dP = P[:, i]
+		X[:, i + 1] = X[:, i] + (r - w) * dt + sigma * dW + J[:, i] * dP
+
+	S = np.exp(X)
+
+	return t, S, X
+
