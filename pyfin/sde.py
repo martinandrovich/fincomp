@@ -5,11 +5,11 @@ DEFAULT_SEED = 0
 
 
 def abm(s0, mu, sigma, T, dt=0.01, num_paths=10, reproducible=False):
-	"""Arithmeic brownian motion."""
+	"""Arithmeic Brownian motion."""
 
+	# based on (2.1), (2.32)
 	# dS(t) = mu * dt + sigma * dW
 	# S(t + dt) = S(t) + mu * dt + sigma * (W(t + dt) - W(t))
-	# S(t + dt) = S(t) + dS(t) * dt
 
 	# compute multiple paths at once
 	# each path/realization is a row with column-wise time progression
@@ -45,8 +45,9 @@ def abm(s0, mu, sigma, T, dt=0.01, num_paths=10, reproducible=False):
 
 
 def gbm(s0, mu, sigma, T, dt=0.01, num_paths=10, reproducible=False):
-	"""Geometric brownian motion."""
+	"""Geometric Brownian motion."""
 
+	# based on (2.1)
 	# dS(t) = mu * S(t)*dt + sigma * S(t)*dW(t)
 	# S(t + dt) = S(t) + mu * S(t)*dt + sigma * S(t) * (W(t + dt) - W(t))
 	# S(t) = S0 * exp((mu - sigma^2/2)*t + sigma * W(t))
@@ -86,8 +87,9 @@ def gbm(s0, mu, sigma, T, dt=0.01, num_paths=10, reproducible=False):
 
 
 def ou(s0, kappa, theta, sigma, T, dt=0.01, num_paths=10, reproducible=False):
-	"""Geometric brownian motion."""
+	"""Ornstein-Uhlenbeck."""
 
+	# based on (8.1)
 	# dS(t) = κ * (θ - S(t)) * dt + σ * dW
 	# S(t + dt) = S(t) + κ * (θ - S(t)) * dt + σ * dW
 
@@ -119,6 +121,13 @@ def ou(s0, kappa, theta, sigma, T, dt=0.01, num_paths=10, reproducible=False):
 
 
 def abm_corr(s0, mu, C, D, T, dt=0.01, reproducible=False):
+	"""
+	Correlated arithmetic Brownian motion.
+	:param np.array() D: design matrix
+	:param np.array() C: correlation matrix
+	"""
+
+	# based on (7.8)
 
 	if reproducible:
 		np.random.seed(DEFAULT_SEED)
@@ -143,6 +152,10 @@ def abm_corr(s0, mu, C, D, T, dt=0.01, reproducible=False):
 
 
 def merton(s0, r, sigma, mu_J, sigma_J, xi_p, T, dt=0.01, num_paths=10, reproducible=False):
+	"""Standard jump diffusion model (Merton model)."""
+
+	# based on (5.10), (5.11)
+	# dX(t) = (r - xi_p * E[e^J - 1] - 1/2 * sigma^2)*dt + sigma*dW(t) * J*dXp(t)
 
 	if reproducible:
 		np.random.seed(DEFAULT_SEED)
@@ -162,7 +175,7 @@ def merton(s0, r, sigma, mu_J, sigma_J, xi_p, T, dt=0.01, num_paths=10, reproduc
 		if num_paths > 1:  # standardize samples (mean: 0, var: 1)
 			Z[:, i] = (Z[:, i] - np.mean(Z[:, i])) / np.std(Z[:, i])
 
-		w = xi_p * (exp(mu_J + (sigma_J ** 2) / 2) - 1)  # drift correction term
+		w = xi_p * (exp(mu_J + (sigma_J ** 2) / 2) - 1) + 1/2 * sigma**2  # drift correction term
 		dW = sqrt(dt) * Z[:, i]
 		# dP = P[:, i] - P[:, 0]
 		dP = P[:, i]
