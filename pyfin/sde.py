@@ -186,7 +186,7 @@ def merton(s0, r, sigma, mu_J, sigma_J, xi_p, T, dt=0.01, num_paths=10, reproduc
 	return t, S, X
 
 
-def heston(s0, r, v0, v_bar, kappa, gamma, rho, T, dt=0.01, num_paths=10,  reproducible=False):
+def heston(s0, r, v0, v_bar, kappa, gamma, rho, T, dt=0.01, num_paths=10, reproducible=False):
 	"""Heston stochastic volatility model."""
 
 	# based on (8.18), (8.21), (8.3)
@@ -224,7 +224,54 @@ def heston(s0, r, v0, v_bar, kappa, gamma, rho, T, dt=0.01, num_paths=10,  repro
 	return t, S, X, V
 
 
+def heston_aes(s0, r, v0, v_bar, kappa, gamma, rho, T, dt=0.01, num_paths=10,  reproducible=False):
+	"""Heston stochastic volatility model with almost-exact CIR process."""
+
+	# based on (9.59)
+	# compute paths using almost-exact simulation of CIR process v(t)
+
+	if reproducible:
+		np.random.seed(DEFAULT_SEED)
+
+	num_steps = int(T / dt)
+	Z_x = np.random.normal(0.0, 1.0, [num_paths, num_steps])
+	X = np.zeros([num_paths, num_steps + 1])
+	V = np.zeros([num_paths, num_steps + 1])
+	t = np.linspace(0, T, num_steps + 1)
+
+	X[:, 0] = log(s0)
+	V[:, 0] = v0
+
+	def cir_sample(v, dt):
+		c_ = gamma**2/(4 * kappa) * (1 - exp(-kappa * dt))
+		delta = (4 * kappa * v_bar)/(gamma**2)
+		kappa_ = (4 * kappa * exp(-kappa * dt))/(gamma**2 * (1 - exp(-kappa * dt))) * v
+		return c_ * np.random.noncentral_chisquare(delta, kappa_)
+
+	for i in range(num_steps):
+
+		if num_paths > 1:  # standardize samples (mean: 0, var: 1)
+			Z_x[:, i] = (Z_x[:, i] - np.mean(Z_x[:, i])) / np.std(Z_x[:, i])
+
+		# dW_x, dW_v = sqrt(dt) * Z_x[:, i], sqrt(dt) * Z_v[:, i]
+
+		V[:, i + 1] = cir_sample(V[:, i], dt)
+		V[:, i + 1] = np.maximum(V[:, i + 1], 0)  # truncate due to sqrt(v(t))
+
+		k0 = (r - rho/gamma * kappa * v_bar) * dt
+		k1 = (rho * kappa/gamma - 1/2) * dt - rho/gamma
+		k2 = rho/gamma
+		k3 = (1 - rho**2) * dt
+
+		X[:, i + 1] = X[:, i] + k0 + k1 * V[:, i] + k2 * V[:, i + 1] + np.sqrt(k3 * V[:, i]) * Z_x[:, i]
+
+	S = np.exp(X)
+
+	return t, S, X, V
+
+
 def heston_corr(s0, r, v0, v_bar, kappa, gamma, rho, T, dt=0.01, num_paths=10, reproducible=False):
+	"""Heston stochastic volatility model (different implementation)."""
 
 	# based on (8.38)
 
