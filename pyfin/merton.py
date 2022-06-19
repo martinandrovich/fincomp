@@ -3,7 +3,8 @@ from math import log, sqrt, exp, cos, sin, factorial, pi
 import scipy.stats as st
 
 
-def merton(option_type, s0, r, sigma, mu_J, sigma_J, xi_p, K, T, N=20, t0=0):
+def merton(option_type, K, T, s0, r, sigma, mu_J, sigma_J, xi_p, N=20, t0=0):
+	"""Pricing of European options using analytical Merton."""
 
 	# value of European option based on Merton model using analytical solution
 	# based on (5.28)
@@ -37,7 +38,8 @@ def merton(option_type, s0, r, sigma, mu_J, sigma_J, xi_p, K, T, N=20, t0=0):
 		return V(N) - s0 + K * exp(-r * tau)
 
 
-def merton_cos(option_type, s0, r, sigma, mu_J, sigma_J, xi_p, K, T, a, b, N=1000, t0=0):
+def merton_cos(option_type, K, T, s0, r, sigma, mu_J, sigma_J, xi_p, a, b, N=1000, t0=0):
+	"""Pricing of European options using COS-based Merton."""
 
 	# value of European option based on Merton model using COS method
 	# based on (6.28)
