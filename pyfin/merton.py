@@ -35,24 +35,6 @@ def merton(option_type, s0, r, sigma, mu_J, sigma_J, xi_p, K, T, N=20, t0=0):
 		return V(N)
 	else:
 		return V(N) - s0 + K * exp(-r * tau)
-	
-
-def merton_chf(t, r, sigma, mu_J, sigma_J, xi_p, x0=0):
-
-	# charachteristic function of the Merton model
-	# based on (5.33)
-
-	def chf(u):
-
-		i = complex(0, 1)
-
-		E_eJ = np.exp(mu_J + (sigma_J**2) / 2) - 1  # E[e^J - 1]
-		E_eiuJ = np.exp(i * u * mu_J - 1/2 * u**2 * sigma_J**2) - 1  # E[e^iuJ - 1]
-		mu = r - 1/2 * sigma**2 - xi_p * E_eJ
-
-		return np.exp(i * u * (x0 + mu * t) - 1/2 * sigma**2 * u**2 * t) * np.exp(xi_p * t * E_eiuJ)
-
-	return chf
 
 
 def merton_cos(option_type, s0, r, sigma, mu_J, sigma_J, xi_p, K, T, a, b, N=1000, t0=0):
@@ -70,6 +52,24 @@ def merton_cos(option_type, s0, r, sigma, mu_J, sigma_J, xi_p, K, T, a, b, N=100
 	V = exp(-r * tau) * sum([summand(k) * (1 if k else 0.5) for k in range(N)])  # multiply 1st term with 1/2
 
 	return V
+
+
+def merton_chf(t, r, sigma, mu_J, sigma_J, xi_p, x0=0):
+
+	# charachteristic function of the Merton model
+	# based on (5.33)
+
+	def chf(u):
+
+		i = complex(0, 1)
+
+		E_eJ = np.exp(mu_J + (sigma_J**2) / 2) - 1  # E[e^J - 1]
+		E_eiuJ = np.exp(i * u * mu_J - 1/2 * u**2 * sigma_J**2) - 1  # E[e^iuJ - 1]
+		mu = r - 1/2 * sigma**2 - xi_p * E_eJ
+
+		return np.exp(i * u * (x0 + mu * t) - 1/2 * sigma**2 * u**2 * t) * np.exp(xi_p * t * E_eiuJ)
+
+	return chf
 
 
 def merton_H_k(option_type, a, b, K):
