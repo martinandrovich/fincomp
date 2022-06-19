@@ -25,6 +25,7 @@ def bs(option_type, s0, K, r, sigma, T, t=0):
 def bs_num(option_type, s0, K, r, sigma, T, t=0, num_paths=1000):
 
 	# optimal version; compute only the last timeslice
+	# based on (2.32)
 	# S(t) = s0 * exp[(μ - 1/2 * σ²) * (t - t0) + σ * (W(t) - W(t0))]
 
 	S = np.array([s0 * exp((r - 1/2 * sigma ** 2) * (T - t) + sigma * (np.random.normal(0, T) - np.random.normal(0, 1.0))) for _ in range(num_paths)])
