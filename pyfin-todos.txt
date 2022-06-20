@@ -1,10 +1,11 @@
 # todos
 
-- add equation comments for methods
+x add equation comments for methods
 - change figures to subplot
 - references (book, papers etc.)
 - permalinks for functions/modules
 - check PDF output
+- rename `_num` to `_mc`
 
 
 # todo (peter)
