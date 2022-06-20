@@ -5,7 +5,7 @@ figure.autolayout: True
 savefig.bbox: tight
 # text.usetex: true
 
-lines.linewidth : 1
+lines.linewidth : 2
 # lines.markersize : 10
 
 figure.titlesize: 15

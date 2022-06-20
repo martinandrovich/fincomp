@@ -1,8 +1,11 @@
 # todos
 
-- fix permalinks
+- add equation comments for methods
 - change figures to subplot
 - references (book, papers etc.)
+- permalinks for functions/modules
+- check PDF output
+
 
 # todo (peter)
 
